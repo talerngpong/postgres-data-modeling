@@ -150,6 +150,10 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    '''
+    - Process muliple song_data files by reading and inserting data into song and artist tables
+    - Process muliple log_data files by reading and inserting data into time, user and songplay tables
+    '''
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
