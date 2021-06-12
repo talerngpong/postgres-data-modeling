@@ -10,13 +10,13 @@ def process_song_file(cur, filepath):
     # open song file
     df = pd.DataFrame([pd.read_json(filepath, typ='series')])
 
+    # insert artist record
+    for artist_data in df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values:
+        cur.execute(artist_table_insert, artist_data)
+
     # insert song record
     for song_data in df[['song_id', 'title', 'artist_id', 'year', 'duration']].values:
         cur.execute(song_table_insert, song_data)
-    
-    # insert artist record
-    for artist_data in df[['song_id', 'title', 'artist_id', 'year', 'duration']].values:
-        cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
@@ -73,7 +73,7 @@ def process_log_file(cur, filepath):
         cur.execute(user_table_insert, row)
 
     # insert songplay records
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
@@ -86,7 +86,6 @@ def process_log_file(cur, filepath):
 
         # insert songplay record
         songplay_data = (
-            index,
             row['ts'],
             row['userId'],
             row['level'],
