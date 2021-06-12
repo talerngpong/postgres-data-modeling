@@ -7,6 +7,16 @@ from datetime import datetime as dt
 
 
 def process_song_file(cur, filepath):
+    '''
+    Process a song file by reading and inserting data to song and artist tables
+
+        Parameters:
+            cur (psycopg2.extensions.cursor): active DB cursor
+            filepath (str): file path pointing to a song file
+        
+        Returns:
+            None
+    '''
     # open song file
     df = pd.DataFrame([pd.read_json(filepath, typ='series')])
 
@@ -20,6 +30,16 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    '''
+    Process a log file by reading and inserting data to time, user and songplay tables
+
+        Parameters:
+            cur (psycopg2.extensions.cursor): active DB cursor
+            filepath (str): file path pointing to a log file
+        
+        Returns:
+            None
+    '''
     def get_lines_from_file(internal_filepath):
         lines = []
         with open(internal_filepath) as j_file:
@@ -99,9 +119,21 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    '''
+    Process files on a target path
+
+        Parameters:
+            cur (psycopg2.extensions.cursor): active DB cursor
+            conn (psycopg2.extensions.connection): active DB connection
+            filepath (str): path pointing to a directory storing files to be processed
+            func (typing.Callable[[psycopg2.extensions.cursor, str], None]): callback to process one file
+        
+        Returns:
+            None
+    '''
     # get all files matching extension from directory
     all_files = []
-    for root, dirs, files in os.walk(filepath):
+    for root, _, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
         for f in files :
             all_files.append(os.path.abspath(f))
